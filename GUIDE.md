@@ -208,7 +208,7 @@ brew install opa
 **Linux:**
 ```bash
 # Download the latest version
-curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_x86_64
+curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64
 chmod +x opa
 sudo mv opa /usr/local/bin/
 ```
@@ -222,8 +222,8 @@ Invoke-WebRequest -Uri $url -OutFile "C:\Program Files\opa.exe"
 
 **Verify Installation:**
 ```bash
-opa --version
-# Should show: OPA 0.x.x
+opa version
+# Should show: Version: x.x.x
 ```
 
 ---
@@ -275,7 +275,7 @@ Run this verification script:
 # Check all components
 python3 -c "print('✓ Python installed'); import sys; print(f'  Version: {sys.version}')"
 docker --version
-opa --version
+opa version
 python3 -m pytest --version
 ```
 
@@ -284,7 +284,7 @@ python3 -m pytest --version
 ✓ Python installed
   Version: Python 3.12.1
 Docker version 24.0.0
-OPA 0.48.0
+Version: 1.15.2
 pytest 9.0.0
 ```
 

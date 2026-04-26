@@ -12,7 +12,8 @@ def main() -> None:
     proxy = PolicyEnforcementProxy(opa_client=opa_client, sandbox_manager=sandbox)
 
     tool_name = "echo"
-    args = ["Hello, secure proxy!"]
+    args = {
+    "input": "Hello, secure proxy!"}
     metadata = {
         "source": "langgraph",
         "request_id": "req-123",

@@ -11,49 +11,52 @@ allowed_network_destinations = {
 
 destructive_commands = {"rm", "chmod", "chown", "mv", "rmdir", "dd"}
 
-write_path_allowed(path) {
+write_path_allowed(path) if {
     startswith(path, "/workspace")
 }
 
-network_allowed(destination) {
+network_allowed(destination) if {
     destination == allowed_network_destinations[_]
 }
 
-is_destructive {
+is_destructive if {
     input.command_name == cmd
     destructive_commands[cmd]
 }
 
-denied[msg] {
+denied contains msg if {
     input.action == "execute"
     some i
     flag := input.args[i]
     write_path_flag(flag)
     path := input.args[i+1]
     not write_path_allowed(path)
-    msg = sprintf("write access denied outside /workspace: %s", [path])
+    msg := sprintf("write access denied outside /workspace: %s", [path])
 }
 
-denied[msg] {
+denied contains msg if {
     input.metadata.action == "network"
     not network_allowed(input.metadata.destination)
-    msg = sprintf("network destination denied: %s", [input.metadata.destination])
+    msg := sprintf("network destination denied: %s", [input.metadata.destination])
 }
 
-allow {
+allow if {
     input.action == "execute"
-    not denied[_]
+    count(denied) == 0
     not is_destructive
 }
 
-allow {
+allow if {
     input.action == "execute"
-    not denied[_]
+    count(denied) == 0
     is_destructive
     input.metadata.user_approval == true
 }
 
-write_path_flag(flag) {
+write_path_flag(flag) if {
     flag == "-o"
+}
+
+write_path_flag(flag) if {
     flag == "--output"
 }
