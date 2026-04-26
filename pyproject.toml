@@ -1,0 +1,21 @@
+[project]
+name = "agentic_ai_governance"
+version = "0.1.0"
+description = "Multi-layered policy enforcement framework for secure agentic AI execution."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+dependencies = []
+optional-dependencies = { dev = ["pytest>=8.0"] }
+
+[project.urls]
+homepage = "https://github.com/Helio3002/Agentic-AI-Governance"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
