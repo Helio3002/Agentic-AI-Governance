@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # OPA server for policy evaluation
+  opa:
+    image: openpolicyagent/opa:latest-rootless
+    ports:
+      - "8181:8181"
+    volumes:
+      - ./src/policies:/policies:ro
+    command:
+      - "run"
+      - "--server"
+      - "--set=decision_logs.console=true"
+      - "/policies/policy.rego"
+    networks:
+      - governance
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8181/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Test runner service
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      - OPA_URL=http://opa:8181
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - .:/workspace
+      - /workspace/.pytest_cache
+    networks:
+      - governance
+    depends_on:
+      opa:
+        condition: service_healthy
+    command: pytest tests/ -v --tb=short
+
+networks:
+  governance:
+    driver: bridge

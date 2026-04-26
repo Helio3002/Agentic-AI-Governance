@@ -1,0 +1,23 @@
+FROM python:3.11-slim
+
+WORKDIR /workspace
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy project files
+COPY . .
+
+# Install Python dependencies
+RUN python -m pip install --upgrade pip && \
+    python -m pip install -e .[dev]
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+ENV OPA_URL=http://opa:8181
+
+# Run tests by default
+CMD ["pytest", "tests/", "-v"]
