@@ -16,6 +16,12 @@ This directory contains working examples showing how different AI agents can int
 - Demonstrates safe file operations through the proxy
 - Includes OpenAI function schema for reference
 
+### 3. `example_openclaw_agent.py`
+**OpenClaw Agent Integration**
+- Template for integrating OpenClaw with secure proxy
+- Shows how to replace direct tool executions with proxy calls
+- Includes example tool methods for common operations
+
 ## 🚀 Running the Examples
 
 ### Prerequisites
@@ -40,10 +46,16 @@ This directory contains working examples showing how different AI agents can int
 python example_ibm_agent.py
 ```
 
-### Run OpenAI Agent Example
+### Run OpenClaw Integration Example
 ```bash
-python example_openai_agent.py
+python openclaw_integration.py
 ```
+
+This script demonstrates:
+- Secure command execution through the proxy
+- Common tool operations (list, read, search, etc.)
+- Execution history and audit logging
+- JSON export of audit summary
 
 ## 🔒 How It Works
 
