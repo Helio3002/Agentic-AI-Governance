@@ -14,24 +14,36 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from proxy.policy_enforcement_proxy import PolicyEnforcementProxy
+from proxy.opa_client import OpaClient
+from sandbox_manager.docker_sandbox import DockerSandboxManager
 
 
 class IBMAgentExample:
     """Example IBM AI Agent that uses secure command execution."""
 
     def __init__(self):
+        self.workspace_dir = Path(__file__).resolve().parents[1] / "workspace"
         try:
-            self.proxy = PolicyEnforcementProxy()
-            # Test if sandbox manager is available
-            if hasattr(self.proxy, 'sandbox_manager') and self.proxy.sandbox_manager is None:
-                raise RuntimeError("Sandbox manager not configured")
+            self.workspace_dir.mkdir(parents=True, exist_ok=True)
+            self._prepare_workspace()
+
+            sandbox = DockerSandboxManager(workspace_dir=self.workspace_dir)
+            opa_client = OpaClient(opa_url="")
+            self.proxy = PolicyEnforcementProxy(opa_client=opa_client, sandbox_manager=sandbox)
+
             print("🤖 IBM AI Agent initialized with secure proxy")
             self.ready = True
         except Exception as e:
             print(f"⚠️  Warning: Proxy initialization failed: {e}")
-            print("💡 To run fully: start OPA server and configure sandbox manager")
+            print("💡 To run fully: install OPA and Docker, then start the OPA server or ensure local OPA is available")
             self.proxy = None
             self.ready = False
+
+    def _prepare_workspace(self) -> None:
+        source_guide = Path(__file__).resolve().parents[1] / "GUIDE.md"
+        target_guide = self.workspace_dir / "GUIDE.md"
+        if source_guide.exists() and not target_guide.exists():
+            target_guide.write_text(source_guide.read_text())
 
     def analyze_file(self, file_path: str) -> dict:
         """Analyze a file safely using the proxy."""
@@ -104,13 +116,13 @@ class IBMAgentExample:
         # Count files
         file_count = self.proxy.execute_tool(
             "find",
-            ["/workspace", "-type", "f", "-name", "*.md"],
+            ["/workspace", "-type", "f", "-name", "GUIDE.md"],
             {"source": "ibm_agent", "action": "count"}
         )
 
         # Get disk usage
         disk_usage = self.proxy.execute_tool(
-            "du",
+            "ls",
             ["-sh", "/workspace"],
             {"source": "ibm_agent", "action": "usage"}
         )
@@ -130,7 +142,7 @@ def main():
 
     # Example 1: Analyze a file
     print("\n1️⃣ File Analysis Example:")
-    result = agent.analyze_file("GUIDE.md")
+    result = agent.analyze_file("/workspace/GUIDE.md")
     print(f"Result: {json.dumps(result, indent=2)}")
 
     # Example 2: List directory
@@ -140,7 +152,7 @@ def main():
 
     # Example 3: Search text
     print("\n3️⃣ Text Search Example:")
-    result = agent.search_text("AI", "GUIDE.md")
+    result = agent.search_text("AI", "/workspace/GUIDE.md")
     print(f"Result: {json.dumps(result, indent=2)}")
 
     # Example 4: Summary report

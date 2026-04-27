@@ -47,7 +47,7 @@ class DockerSandboxManager:
             "--pids-limit=64",
             "--memory=256m",
             "-v",
-            f"{self.workspace_dir}:{self.workspace_dir}:{mount_mode}",
+            f"{self.workspace_dir}:/workspace:{mount_mode}",
             self.image,
             tool_name,
             *args,

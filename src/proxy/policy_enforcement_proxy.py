@@ -33,11 +33,17 @@ class PolicyEnforcementProxy:
         sandbox_manager: Optional[Any] = None,
         validator: Optional[ToolRequestValidator] = None,
         policy_path: Optional[Path] = None,
+        audit_log_path: Optional[Path] = None,
     ) -> None:
         self.opa_client = opa_client or OpaClient()
         self.sandbox_manager = sandbox_manager
         self.validator = validator or ToolRequestValidator()
         self.policy_path = policy_path or Path(__file__).resolve().parents[1] / "policies" / "policy.rego"
+        self.audit_log_path = Path(audit_log_path) if audit_log_path is not None else None
+        self.audit_log_file = None
+        if self.audit_log_path is not None:
+            self.audit_log_path.parent.mkdir(parents=True, exist_ok=True)
+            self.audit_log_file = self.audit_log_path.open("a", encoding="utf-8")
 
     def _mask_sensitive_output(self, raw_output: str) -> str:
         sanitized = raw_output
@@ -53,7 +59,11 @@ class PolicyEnforcementProxy:
 
     def _log(self, event_type: str, payload: Dict[str, Any]) -> None:
         record = {"event": event_type, "payload": payload}
-        logger.info(json.dumps(record, ensure_ascii=False))
+        message = json.dumps(record, ensure_ascii=False)
+        logger.info(message)
+        if self.audit_log_file is not None:
+            self.audit_log_file.write(message + "\n")
+            self.audit_log_file.flush()
 
     def _build_policy_input(self, tool_name: str, action: str, args: List[str], metadata: Dict[str, Any]) -> Dict[str, Any]:
         return {

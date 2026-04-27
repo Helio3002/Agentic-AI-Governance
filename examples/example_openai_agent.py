@@ -15,19 +15,25 @@ from typing import Dict, Any
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from proxy.policy_enforcement_proxy import PolicyEnforcementProxy
+from proxy.opa_client import OpaClient
+from sandbox_manager.docker_sandbox import DockerSandboxManager
 
 
 class OpenAIAgentExample:
     """Example OpenAI Agent that uses secure command execution."""
 
     def __init__(self):
+        workspace_dir = Path(__file__).resolve().parents[1] / "workspace"
         try:
-            self.proxy = PolicyEnforcementProxy()
+            sandbox = DockerSandboxManager(workspace_dir=workspace_dir)
+            opa_client = OpaClient(opa_url="")
+            self.proxy = PolicyEnforcementProxy(opa_client=opa_client, sandbox_manager=sandbox)
+
             print("🤖 OpenAI Agent initialized with secure proxy")
             self.ready = True
         except Exception as e:
             print(f"⚠️  Warning: Proxy initialization failed: {e}")
-            print("💡 To run fully: start OPA server and configure sandbox manager")
+            print("💡 To run fully: install OPA and Docker, then start the OPA server or ensure local OPA is available")
             self.proxy = None
             self.ready = False
 
