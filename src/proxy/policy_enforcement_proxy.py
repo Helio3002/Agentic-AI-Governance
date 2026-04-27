@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -39,7 +40,20 @@ class PolicyEnforcementProxy:
         self.sandbox_manager = sandbox_manager
         self.validator = validator or ToolRequestValidator()
         self.policy_path = policy_path or Path(__file__).resolve().parents[1] / "policies" / "policy.rego"
-        self.audit_log_path = Path(audit_log_path) if audit_log_path is not None else None
+
+        if audit_log_path is not None:
+            self.audit_log_path = Path(audit_log_path)
+        elif os.getenv("AGENTIC_AUDIT_LOG_PATH"):
+            self.audit_log_path = Path(os.getenv("AGENTIC_AUDIT_LOG_PATH"))
+        else:
+            default_log_path = Path(__file__).resolve().parents[2] / "logs" / "audit_log.jsonl"
+            legacy_log_path = Path(__file__).resolve().parents[1] / "logs" / "audit_log.jsonl"
+            self.audit_log_path = (
+                legacy_log_path
+                if legacy_log_path.exists() and not default_log_path.exists()
+                else default_log_path
+            )
+
         self.audit_log_file = None
         if self.audit_log_path is not None:
             self.audit_log_path.parent.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,3 @@
+{"event": "policy_request", "payload": {"tool": "echo", "command_name": "echo", "action": "execute", "args": ["test"], "metadata": {"action": "execute"}}}
+{"event": "policy_decision", "payload": {"allow": true, "opa_response": {"result": true}}}
+{"event": "tool_result", "payload": {"allowed": true, "exit_code": 0, "stdout": "ok", "stderr": ""}}
