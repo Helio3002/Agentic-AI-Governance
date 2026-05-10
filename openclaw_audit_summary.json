@@ -1,0 +1,79 @@
+{
+  "total_executions": 5,
+  "allowed_count": 4,
+  "denied_count": 1,
+  "history": [
+    {
+      "command": "ls",
+      "args": [
+        "-la",
+        "/workspace"
+      ],
+      "result": {
+        "allowed": true,
+        "exit_code": 0,
+        "stdout": "total 8\ndrwxrwxrwx+ 2 1000 1000 4096 Apr 27 01:30 .\ndrwxr-xr-x  1 root root 4096 Apr 27 06:37 ..\n",
+        "stderr": ""
+      },
+      "timestamp": "2026-04-27T06:37:19.501300"
+    },
+    {
+      "command": "cat",
+      "args": [
+        "GUIDE.md"
+      ],
+      "result": {
+        "allowed": true,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "cat: GUIDE.md: No such file or directory\n"
+      },
+      "timestamp": "2026-04-27T06:37:19.922508"
+    },
+    {
+      "command": "find",
+      "args": [
+        "/workspace",
+        "-name",
+        "*.md"
+      ],
+      "result": {
+        "allowed": false,
+        "error": "Invalid argument: *.md",
+        "timestamp": "2026-04-27T06:37:19.922570"
+      },
+      "timestamp": "2026-04-27T06:37:19.922572"
+    },
+    {
+      "command": "wc",
+      "args": [
+        "-l",
+        "-w",
+        "-c",
+        "GUIDE.md"
+      ],
+      "result": {
+        "allowed": true,
+        "exit_code": 1,
+        "stdout": "",
+        "stderr": "wc: GUIDE.md: No such file or directory\n"
+      },
+      "timestamp": "2026-04-27T06:37:20.246621"
+    },
+    {
+      "command": "grep",
+      "args": [
+        "-n",
+        "secure",
+        "GUIDE.md"
+      ],
+      "result": {
+        "allowed": true,
+        "exit_code": 2,
+        "stdout": "",
+        "stderr": "grep: GUIDE.md: No such file or directory\n"
+      },
+      "timestamp": "2026-04-27T06:37:20.585735"
+    }
+  ]
+}
