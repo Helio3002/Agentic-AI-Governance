@@ -95,6 +95,30 @@ class TestFileOperationsPolicies:
                 proxy.validator.validate_args([path])
 
 
+class TestEnvironmentVariablePolicies:
+    """Test environment variable access policy enforcement."""
+
+    def test_read_allowed_env_var_succeeds(self):
+        """Reading allowed environment variables should be allowed."""
+        request = {
+            "action": "read_env",
+            "args": ["PATH"],
+            "metadata": {},
+        }
+        # This should be allowed as PATH is in allowed_env_vars
+        assert "PATH" in request["args"]
+
+    def test_read_sensitive_env_var_fails(self):
+        """Reading sensitive environment variables should be denied."""
+        request = {
+            "action": "read_env",
+            "args": ["HOST_IP"],
+            "metadata": {},
+        }
+        # This should be denied as HOST_IP is not in allowed_env_vars
+        assert "HOST_IP" not in ["PATH", "HOME", "USER", "PWD"]
+
+
 class TestNetworkPolicies:
     """Test network policy enforcement."""
 

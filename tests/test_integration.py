@@ -89,6 +89,22 @@ class TestOpaIntegration:
         actual = self._extract_allow_result(result)
         assert actual == expected
 
+    def test_read_allowed_env_var_allowed(self, opa_client, policy_path):
+        """Test that reading allowed environment variables is allowed."""
+        request = SAMPLE_PAYLOADS["read_allowed_env_var"]
+        result = opa_client.evaluate(request, str(policy_path))
+        expected = EXPECTED_RESULTS["read_allowed_env_var"]["allow"]
+        actual = self._extract_allow_result(result)
+        assert actual == expected
+
+    def test_read_sensitive_env_var_denied(self, opa_client, policy_path):
+        """Test that reading sensitive environment variables is denied."""
+        request = SAMPLE_PAYLOADS["read_sensitive_env_var"]
+        result = opa_client.evaluate(request, str(policy_path))
+        expected = EXPECTED_RESULTS["read_sensitive_env_var"]["allow"]
+        actual = self._extract_allow_result(result)
+        assert actual == expected
+
     @staticmethod
     def _extract_allow_result(opa_response):
         """Extract allow boolean from OPA response in various formats."""

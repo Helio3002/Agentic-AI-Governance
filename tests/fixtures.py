@@ -138,6 +138,24 @@ SAMPLE_PAYLOADS = {
             "request_id": "req-012",
         },
     },
+    "read_allowed_env_var": {
+        "action": "read_env",
+        "command_name": "read_env",
+        "args": ["PATH"],
+        "metadata": {
+            "user_id": "user123",
+            "request_id": "req-013",
+        },
+    },
+    "read_sensitive_env_var": {
+        "action": "read_env",
+        "command_name": "read_env",
+        "args": ["HOST_IP"],
+        "metadata": {
+            "user_id": "user123",
+            "request_id": "req-014",
+        },
+    },
 }
 
 # Sample audit logs
@@ -213,6 +231,9 @@ EXPECTED_RESULTS = {
     # Resources
     "high_memory_resource": {"allow": False, "component": "resource_policies"},
     "valid_resource_request": {"allow": True, "component": "resource_policies"},
+    # Environment variables
+    "read_allowed_env_var": {"allow": True, "component": "policy"},
+    "read_sensitive_env_var": {"allow": False, "component": "policy"},
 }
 
 # Policy test cases
@@ -257,6 +278,18 @@ POLICY_TEST_CASES = [
         "name": "Deny untrusted domain access",
         "policy": "network_policies",
         "request": SAMPLE_PAYLOADS["untrusted_domain"],
+        "expected": False,
+    },
+    {
+        "name": "Allow reading allowed environment variables",
+        "policy": "policy",
+        "request": SAMPLE_PAYLOADS["read_allowed_env_var"],
+        "expected": True,
+    },
+    {
+        "name": "Deny reading sensitive environment variables",
+        "policy": "policy",
+        "request": SAMPLE_PAYLOADS["read_sensitive_env_var"],
         "expected": False,
     },
 ]

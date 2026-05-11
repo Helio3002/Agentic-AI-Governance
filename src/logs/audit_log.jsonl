@@ -2135,3 +2135,38 @@
 {"event": "policy_request", "payload": {"tool": "echo", "command_name": "echo", "action": "execute", "args": ["hello", "world"], "metadata": {"user_id": "test", "request_id": "latency-test"}}}
 {"event": "policy_decision", "payload": {"allow": true, "opa_response": {"result": true}}}
 {"event": "tool_result", "payload": {"allowed": true, "exit_code": 0, "stdout": "mock output", "stderr": ""}}
+{"event": "policy_request", "payload": {"tool": "read_env", "command_name": "read_env", "action": "read_env", "args": ["PATH"], "metadata": {"user_id": "test_agent", "request_id": "test-001"}}}
+{"event": "policy_decision", "payload": {"allow": true, "opa_response": {"decision_id": "5d32daf8-6c9d-47f1-854f-f122950aee54", "result": true}}}
+{"event": "policy_request", "payload": {"tool": "read_env", "command_name": "read_env", "action": "read_env", "args": ["HOST_IP"], "metadata": {"user_id": "test_agent", "request_id": "test-002"}}}
+{"event": "policy_decision", "payload": {"allow": false, "opa_response": {"decision_id": "13acc4c3-a32c-4a1a-97fc-01b7af6541b6", "result": false}}}
+{"event": "policy_request", "payload": {"tool": "read_env", "command_name": "read_env", "action": "read_env", "args": ["HOSTNAME"], "metadata": {"user_id": "test_agent", "request_id": "test-003"}}}
+{"event": "policy_decision", "payload": {"allow": false, "opa_response": {"decision_id": "b7bc8350-e4b5-457e-9b30-045fe06e2e4e", "result": false}}}
+{"event": "policy_request", "payload": {"tool": "echo", "command_name": "echo", "action": "execute", "args": ["hello"], "metadata": {"action": "execute"}}}
+{"event": "policy_decision", "payload": {"allow": true, "opa_response": {"result": true}}}
+{"event": "tool_result", "payload": {"allowed": true, "exit_code": 0, "stdout": "Output from echo", "stderr": ""}}
+{"event": "policy_request", "payload": {"tool": "rm", "command_name": "rm", "action": "execute", "args": ["/workspace/file"], "metadata": {"action": "execute"}}}
+{"event": "policy_decision", "payload": {"allow": false, "opa_response": {"result": false}}}
+{"event": "policy_request", "payload": {"tool": "echo", "command_name": "echo", "action": "execute", "args": ["hello"], "metadata": {"action": "execute"}}}
+{"event": "policy_decision", "payload": {"allow": true, "opa_response": {"result": true}}}
+{"event": "tool_result", "payload": {"allowed": true, "exit_code": 0, "stdout": "Output from echo", "stderr": ""}}
+{"event": "policy_request", "payload": {"tool": "rm", "command_name": "rm", "action": "execute", "args": ["/workspace/file"], "metadata": {"action": "execute"}}}
+{"event": "policy_decision", "payload": {"allow": false, "opa_response": {"result": false}}}
+{"event": "policy_request", "payload": {"tool": "cat", "command_name": "cat", "action": "execute", "args": ["/workspace/README.md"], "metadata": {"user_id": "user123"}}}
+{"event": "policy_decision", "payload": {"allow": true, "opa_response": {"decision_id": "d45e0f94-ce65-4693-a628-ea192daa1a6c", "result": true}}}
+{"event": "policy_request", "payload": {"tool": "echo", "command_name": "echo", "action": "execute", "args": ["test"], "metadata": {"user_id": "user123"}}}
+{"event": "policy_decision", "payload": {"allow": true, "opa_response": {"result": true}}}
+{"event": "policy_request", "payload": {"tool": "echo", "command_name": "echo", "action": "execute", "args": ["hello"], "metadata": {"action": "execute"}}}
+{"event": "policy_decision", "payload": {"allow": true, "opa_response": {"result": true}}}
+{"event": "tool_result", "payload": {"allowed": true, "exit_code": 0, "stdout": "Output from echo", "stderr": ""}}
+{"event": "policy_request", "payload": {"tool": "rm", "command_name": "rm", "action": "execute", "args": ["/workspace/file"], "metadata": {"action": "execute"}}}
+{"event": "policy_decision", "payload": {"allow": false, "opa_response": {"result": false}}}
+{"event": "policy_request", "payload": {"tool": "cat", "command_name": "cat", "action": "execute", "args": ["/workspace/README.md"], "metadata": {"user_id": "user123"}}}
+{"event": "policy_decision", "payload": {"allow": true, "opa_response": {"decision_id": "e363bda8-b297-4329-8b87-355bf5331a88", "result": true}}}
+{"event": "policy_request", "payload": {"tool": "echo", "command_name": "echo", "action": "execute", "args": ["test"], "metadata": {"user_id": "user123"}}}
+{"event": "policy_decision", "payload": {"allow": true, "opa_response": {"result": true}}}
+{"event": "policy_request", "payload": {"tool": "read_env", "command_name": "read_env", "action": "read_env", "args": ["PATH"], "metadata": {"user_id": "test_agent", "request_id": "test-001"}}}
+{"event": "policy_decision", "payload": {"allow": true, "opa_response": {"decision_id": "a0cd9554-b04b-46fb-b0f2-61895ed24dc2", "result": true}}}
+{"event": "policy_request", "payload": {"tool": "read_env", "command_name": "read_env", "action": "read_env", "args": ["HOST_IP"], "metadata": {"user_id": "test_agent", "request_id": "test-002"}}}
+{"event": "policy_decision", "payload": {"allow": false, "opa_response": {"decision_id": "4b4521bc-94d3-4b80-a883-5261d8be308a", "result": false}}}
+{"event": "policy_request", "payload": {"tool": "read_env", "command_name": "read_env", "action": "read_env", "args": ["HOSTNAME"], "metadata": {"user_id": "test_agent", "request_id": "test-003"}}}
+{"event": "policy_decision", "payload": {"allow": false, "opa_response": {"decision_id": "4df28116-a2c1-438b-b34f-3d811bcebbe4", "result": false}}}
