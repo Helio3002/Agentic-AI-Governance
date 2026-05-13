@@ -1,5 +1,7 @@
 package policy
 
+import future.keywords.in
+
 default allow = false
 
 # SECURITY NOTE: Default-deny ensures that any action not explicitly allowed is blocked.

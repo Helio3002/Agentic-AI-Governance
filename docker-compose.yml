@@ -1,44 +1,66 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  # OPA server for policy evaluation
+  # OPA (Open Policy Agent) server for policy evaluation
   opa:
-    image: openpolicyagent/opa:latest-rootless
+    image: openpolicyagent/opa:latest-static
+    container_name: agentic-opa
     ports:
       - "8181:8181"
     volumes:
       - ./src/policies:/policies:ro
+    environment:
+      - OPA_LOG_FORMAT=json
+      - OPA_LOG_LEVEL=info
     command:
       - "run"
       - "--server"
+      - "--log-format=json"
       - "--set=decision_logs.console=true"
+      - "--set=plugins.bundle.service=null"
       - "/policies/policy.rego"
     networks:
       - governance
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8181/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8181/health?bundles"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
 
   # Test runner service
   test:
     build:
       context: .
       dockerfile: Dockerfile.test
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    container_name: agentic-test
     environment:
       - OPA_URL=http://opa:8181
       - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
     volumes:
-      - .:/workspace
+      - .:/workspace:ro
       - /workspace/.pytest_cache
+      - /workspace/.mypy_cache
     networks:
       - governance
     depends_on:
       opa:
         condition: service_healthy
-    command: pytest tests/ -v --tb=short
+    command: pytest tests/ -v --tb=short --disable-warnings
+    restart: "no"
 
 networks:
   governance:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

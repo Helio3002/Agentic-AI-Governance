@@ -262,9 +262,9 @@ class TestAuditLogging:
             metadata={"user_id": "user123"},
         )
 
-        # Check that logs were generated
+        # Check that logs were generated (logs go to stderr)
         captured = capsys.readouterr()
-        assert "policy_request" in captured.out or "policy_decision" in captured.out
+        assert "policy_request" in captured.err or "policy_decision" in captured.err
 
 
 if __name__ == "__main__":

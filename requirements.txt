@@ -1,0 +1,8 @@
+# Core dependencies (minimal)
+# The project has no external runtime dependencies beyond Python stdlib
+# OPA and Docker are required but should be installed separately
+
+# Development dependencies
+pytest>=8.0,<10.0
+pytest-cov>=4.0
+pytest-asyncio>=0.23.0

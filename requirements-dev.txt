@@ -1,0 +1,21 @@
+# Development dependencies for code quality and testing
+-r requirements.txt
+
+# Code formatting and style
+black>=23.0,<25.0
+isort>=5.12,<6.0
+flake8>=6.0,<8.0
+
+# Type checking
+mypy>=1.0,<2.0
+types-setuptools
+
+# Testing and coverage
+coverage>=7.0,<8.0
+
+# Linting
+pylint>=2.16,<4.0
+
+# Documentation
+sphinx>=7.0,<8.0
+sphinx-rtd-theme>=1.3
