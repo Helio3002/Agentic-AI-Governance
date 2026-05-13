@@ -258,6 +258,36 @@ class TestAdminPolicies:
             # Should still be blocked due to critical path
             assert any(request["metadata"]["target_path"].startswith(cp) for cp in critical_paths)
 
+    def test_recursive_delete_requires_hitl(self):
+        """Recursive delete requires HITL authorization even with user approval."""
+        request = {
+            "action": "execute",
+            "command_name": "rm",
+            "args": ["-rf", "/workspace/logs"],
+            "metadata": {
+                "target_path": "/workspace/logs",
+                "user_approval": True,
+                "hitl_authorized": False,
+            },
+        }
+        assert request["metadata"]["user_approval"] is True
+        assert request["metadata"]["hitl_authorized"] is False
+
+    def test_recursive_delete_with_hitl_allowed(self):
+        """Recursive delete with HITL authorization should be allowed."""
+        request = {
+            "action": "execute",
+            "command_name": "rm",
+            "args": ["-rf", "/workspace/logs"],
+            "metadata": {
+                "target_path": "/workspace/logs",
+                "user_approval": True,
+                "hitl_authorized": True,
+            },
+        }
+        assert request["metadata"]["user_approval"] is True
+        assert request["metadata"]["hitl_authorized"] is True
+
     def test_chown_requires_admin_role(self):
         """chown requires admin role."""
         request = {

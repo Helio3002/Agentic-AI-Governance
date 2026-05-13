@@ -14,9 +14,9 @@ allowed_network_destinations = {
 allowed_env_vars = {"PATH", "HOME", "USER", "PWD"}
 
 sensitive_patterns = [
-    r"(?:AKIA|ASIA)[A-Z0-9]{16}",
-    r"(?:\bpassword\b|\bpasswd\b|\bsecret\b)\s*[:=]\s*\S+",
-    r"\b\d{3}-\d{2}-\d{4}\b",
+    "(?:AKIA|ASIA)[A-Z0-9]{16}",
+    "(?:\\bpassword\\b|\\bpasswd\\b|\\bsecret\\b)\\s*[:=]\\s*\\S+",
+    "\\b\\d{3}-\\d{2}-\\d{4}\\b",
 ]
 
 destructive_commands = {"rm", "chmod", "chown", "mv", "rmdir", "dd"}
@@ -35,9 +35,30 @@ is_destructive if {
     destructive_commands[cmd]
 }
 
-contains_sensitive(data) if {
-    some pattern in sensitive_patterns
-    regex.match(pattern, data)
+contains_sensitive(content) if {
+    some pat in sensitive_patterns
+    regex.match(pat, content)
+}
+
+recursive_rm if {
+    input.command_name == "rm"
+    some i
+    flag := input.args[i]
+    flag == "-r"
+}
+
+recursive_rm if {
+    input.command_name == "rm"
+    some i
+    flag := input.args[i]
+    flag == "-rf"
+}
+
+recursive_rm if {
+    input.command_name == "rm"
+    some i
+    flag := input.args[i]
+    flag == "--recursive"
 }
 
 is_sensitive_env_var(var) if {
@@ -62,10 +83,18 @@ denied contains msg if {
 
 denied contains msg if {
     input.action == "network_request"
-    some arg in input.args
-    contains_sensitive(arg)
+    some idx
+    argument := input.args[idx]
+    contains_sensitive(argument)
     not network_allowed(input.metadata.destination)
     msg := sprintf("exfiltration of sensitive data to unauthorized destination denied: %s", [input.metadata.destination])
+}
+
+denied contains msg if {
+    input.action == "file_write"
+    recursive_rm
+    not input.metadata.hitl_authorized
+    msg := "recursive delete denied without HITL authorization"
 }
 
 denied contains msg if {
@@ -118,7 +147,16 @@ allow if {
     input.action == "file_write"
     count(denied) == 0
     is_destructive
+    not recursive_rm
     input.metadata.user_approval == true
+}
+
+allow if {
+    input.action == "file_write"
+    count(denied) == 0
+    recursive_rm
+    input.metadata.user_approval == true
+    input.metadata.hitl_authorized == true
 }
 
 allow if {

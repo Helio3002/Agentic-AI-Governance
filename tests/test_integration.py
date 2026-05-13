@@ -73,11 +73,35 @@ class TestOpaIntegration:
         actual = self._extract_allow_result(result)
         assert actual == expected
 
+    def test_exfiltration_attempt_denied(self, opa_client, policy_path):
+        """Test that exfiltration of sensitive data to unauthorized IP is denied."""
+        request = SAMPLE_PAYLOADS["exfiltration_attempt"]
+        result = opa_client.evaluate(request, str(policy_path))
+        expected = EXPECTED_RESULTS["exfiltration_attempt"]["allow"]
+        actual = self._extract_allow_result(result)
+        assert actual == expected
+
     def test_destructive_without_approval_denied(self, opa_client, policy_path):
         """Test that destructive operations require approval."""
         request = SAMPLE_PAYLOADS["destructive_without_approval"]
         result = opa_client.evaluate(request, str(policy_path))
         expected = EXPECTED_RESULTS["destructive_without_approval"]["allow"]
+        actual = self._extract_allow_result(result)
+        assert actual == expected
+
+    def test_recursive_delete_without_hitl_denied(self, opa_client, policy_path):
+        """Test that recursive delete without HITL authorization is denied."""
+        request = SAMPLE_PAYLOADS["recursive_delete_without_hitl"]
+        result = opa_client.evaluate(request, str(policy_path))
+        expected = EXPECTED_RESULTS["recursive_delete_without_hitl"]["allow"]
+        actual = self._extract_allow_result(result)
+        assert actual == expected
+
+    def test_recursive_delete_with_hitl_allowed(self, opa_client, policy_path):
+        """Test that recursive delete with HITL authorization is allowed."""
+        request = SAMPLE_PAYLOADS["recursive_delete_with_hitl"]
+        result = opa_client.evaluate(request, str(policy_path))
+        expected = EXPECTED_RESULTS["recursive_delete_with_hitl"]["allow"]
         actual = self._extract_allow_result(result)
         assert actual == expected
 
